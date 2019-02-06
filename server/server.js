@@ -15,18 +15,18 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
         console.log("New user connected");
 
-        socket.emit("serverMessage", {
-            from: "Admin",
-            text: "Thanks for joining us!",
-            createdAt: 1800
-        });
 
         socket.on("disconnect", () => {
             console.log("user disconnected");
         })
 
-        socket.on("sendMessage", (message) => {
-            console.log("messageSent", message)
+        socket.on("newMessage", (message) => {
+            console.log("sent message", message);
+            io.emit("serverMessage", {
+                from: message.from,
+                text: message.text,
+                createdAt: new Date().getTime()
+            })
         })
     })
     // app.get('/', (req, res) => {

@@ -2,10 +2,6 @@
  socket.on("connect", function() {
      console.log("connected to the server")
 
-     socket.emit("sendMEssage", {
-         from: "user1",
-         text: "currently free",
-     })
  })
 
  socket.on("diconnect", function() {

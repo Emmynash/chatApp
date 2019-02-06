@@ -20,6 +20,16 @@ io.on('connection', (socket) => {
             console.log("user disconnected");
         })
 
+        socket.emit("serverMessage", {
+            from: "Admin",
+            text: "Welcome to chat app"
+        });
+
+        socket.broadcast.emit("serverMessage", {
+            from: "Admin",
+            text: "New user joined!"
+        })
+
         socket.on("newMessage", (message) => {
             console.log("sent message", message);
             io.emit("serverMessage", {
@@ -27,6 +37,13 @@ io.on('connection', (socket) => {
                 text: message.text,
                 createdAt: new Date().getTime()
             })
+
+            // this send a broadcast message excluding the sender
+            // socket.broadcast.emit("serverMessage", {
+            //     from: message.from,
+            //     text: message.text,
+            //     createdAt: new Date().getTime()
+            // })
         })
     })
     // app.get('/', (req, res) => {

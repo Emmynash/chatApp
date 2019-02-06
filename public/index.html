@@ -8,6 +8,18 @@
 
 <body>
     <p>We are 127.0.0.1</p>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        socket.on("connect", () => {
+            console.log("connected to the server")
+        })
+
+        socket.on("diconnect", () => {
+            console.log("disconnected to the server");
+        })
+    </script>
 </body>
 
 </html>

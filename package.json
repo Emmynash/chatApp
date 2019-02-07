@@ -4,13 +4,19 @@
     "description": "Chat app",
     "main": "server/server.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon server/serve.js"
+        "start": "nodemon server/serve.js",
+        "test": "mocha  \"./{,!(node_modules)/**/}*.test.js\"",
+        "watch-test": "nodemon --exec \"npm test\""
     },
     "dependencies": {
         "express": "4.16.4",
         "nodemon": "1.18.9",
         "socket.io": "2.2.0"
+    },
+    "devDependencies": {
+        "mocha": "5.2.0",
+        "chai": "4.2.0",
+        "expect": "24.1.0"
     },
     "engines": {
         "node": "10.15.0"

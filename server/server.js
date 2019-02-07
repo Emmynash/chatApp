@@ -25,9 +25,10 @@ io.on('connection', (socket) => {
 
         socket.broadcast.emit("serverMessage", generateMessage("Admin", "New user joined!"));
 
-        socket.on("newMessage", (message) => {
+        socket.on("newMessage", (message, callBAck) => {
             console.log("sent message", message);
             io.emit("serverMessage", generateMessage(message.from, message.text));
+            callBAck("Sent from server");
 
             // this send a broadcast message excluding the sender
             // socket.broadcast.emit("serverMessage", {

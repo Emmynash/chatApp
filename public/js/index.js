@@ -11,4 +11,19 @@
  socket.on("serverMessage", function(message) {
      //  console.log(email)
      console.log('new email received', message);
+     var li = jQuery('<li></li>');
+     li.text(`${message.from}: ${message.text}`);
+     jQuery("#listMessage").append(li);
+ })
+
+
+ jQuery("#form-id").on("submit", function(event) {
+     event.preventDefault();
+
+     socket.emit("newMessage", {
+         from: "user",
+         text: jQuery('[name=newText]').val()
+     }, function() {
+
+     })
  })

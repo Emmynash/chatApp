@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
-const { generateMessage } = require('./utils/message');
+const { generateMessage, generateLocationMessage } = require('./utils/message');
 
 const app = express();
 const publicPath = path.join(__dirname, '../public');
@@ -19,6 +19,7 @@ io.on('connection', (socket) => {
 
         socket.on("disconnect", () => {
             console.log("user disconnected");
+
         })
 
         socket.emit("serverMessage", generateMessage("Admin", "Welcome to chat app"));
@@ -29,13 +30,9 @@ io.on('connection', (socket) => {
             console.log("sent message", message);
             io.emit("serverMessage", generateMessage(message.from, message.text));
             callBAck("Sent from server");
-
-            // this send a broadcast message excluding the sender
-            // socket.broadcast.emit("serverMessage", {
-            //     from: message.from,
-            //     text: message.text,
-            //     createdAt: new Date().getTime()
-            // })
+        })
+        socket.on("geolocationMessage", (coords) => {
+            io.emit("newLocationMessage", generateLocationMessage("Admin", `${coords.latitude}, ${coords.longitude}`))
         })
     })
     // app.get('/', (req, res) => {

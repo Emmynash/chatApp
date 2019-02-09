@@ -2,23 +2,31 @@
 <html>
 
 <head>
-    <meta charset="utf-8" />
     <title>Chat me up!</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="./css/style.css" />
 </head>
 
-<body>
-    <p>We are 127.0.0.1</p>
+<body class="chat">
+    <div class="chat__sidebar">
+        <h3>People</h3>
+        <div id="users"></div>
+    </div>
 
-    <ol id="listMessage">
+    <div class="chat__main">
+        <ol class="chat__messages" id="listMessage">
+        </ol>
 
-    </ol>
+        <div class="chat__footer">
+            <form id="form-id">
+                <input name="newText" type="text" placeholder="message" autofocus autocomplete="off" />
+                <button>submit</button>
+            </form>
+            <button id="enableLocation">Send Location</button>
+        </div>
+    </div>
 
-    <form id="form-id">
-        <input name="newText" type="text" placeholder="message" />
-        <button>submit</button>
-    </form>
 
-    <button id="enableLocation">Send Location</button>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="./js/libs/jquery-3.3.1.min.js"></script>

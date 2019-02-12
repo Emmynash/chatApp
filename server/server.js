@@ -3,6 +3,8 @@ const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
 const { generateMessage, generateLocationMessage } = require('./utils/message');
+const { isValidString } = require('./utils/validator');
+const { Users } = require('./utils/users');
 
 const app = express();
 const publicPath = path.join(__dirname, '../public');
@@ -10,6 +12,7 @@ const port = process.env.PORT || 3000;
 
 var server = http.createServer(app);
 var io = socketIO(server);
+var users = new Users();
 
 
 app.use(express.static(publicPath));
@@ -17,22 +20,43 @@ io.on('connection', (socket) => {
         console.log("New user connected");
 
 
-        socket.on("disconnect", () => {
-            console.log("user disconnected");
+        socket.on("userJoin", (params, callBAck) => {
+            if (!isValidString(params.display_name) || !isValidString(params.chat_room)) {
+                return callBAck("Name and chat room are required!");
+            }
 
+            socket.join(params.chat_room);
+            users.removeUser(socket.id);
+            users.addUser(socket.id, params.display_name, params.chat_room);
+            // users.getUser(socket.id);
+            // users.getUsersList(params.chat_room);
+
+            io.to(params.chat_room).emit('updatedUsersList', users.getUsersList(params.chat_room))
+            socket.emit("serverMessage", generateMessage("Admin", "Welcome to chat app"));
+            socket.broadcast.to(params.chat_room).emit("serverMessage", generateMessage("Admin", `${params.display_name} has joined!`));
+
+            callBAck();
         })
 
-        socket.emit("serverMessage", generateMessage("Admin", "Welcome to chat app"));
-
-        socket.broadcast.emit("serverMessage", generateMessage("Admin", "New user joined!"));
 
         socket.on("newMessage", (message, callBAck) => {
             console.log("sent message", message);
             io.emit("serverMessage", generateMessage(message.from, message.text));
             callBAck("Sent from server");
         })
+
         socket.on("geolocationMessage", (coords) => {
             io.emit("newLocationMessage", generateLocationMessage("Admin", `${coords.latitude}, ${coords.longitude}`))
+        })
+
+        socket.on("disconnect", () => {
+            var user = users.removeUser(socket.id);
+
+            if (user) {
+                io.to(user.chatRoom).emit('updatedUsersList', users.getUsersList(user.chatRoom));
+                io.to(user.chatRoom).emit("serverMessage", generateMessage("Admin", `${user.displayName} has left!`))
+            }
+
         })
     })
     // app.get('/', (req, res) => {

@@ -19,12 +19,30 @@ function scrollToBottom() {
 
 
 socket.on("connect", function() {
+    var params = jQuery.deparam(window.location.search);
+    socket.emit("userJoin", params, function(err) {
+        if (err) {
+            alert(err);
+            window.location.href = '/';
+        } else {
+            console.log("No errors");
+        }
+    })
     console.log("connected to the server")
 
 })
 
 socket.on("diconnect", function() {
     console.log("disconnected to the server");
+})
+
+socket.on("updatedUsersList", function(users) {
+    var ol = jQuery('<ol></ol>');
+    users.forEach(function(user) {
+        ol.append(jQuery('<li></li>').text(user));
+    })
+
+    jQuery("#users").html(ol);
 })
 
 socket.on("serverMessage", function(message) {

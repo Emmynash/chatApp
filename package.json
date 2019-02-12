@@ -5,7 +5,7 @@
     "main": "server/server.js",
     "scripts": {
         "start": "nodemon server/serve.js",
-        "test": "mocha  \"./{,!(node_modules)/**/}*message.test.js\"",
+        "test": "mocha  \"./{,!(node_modules)server/**/}*.test.js\"",
         "watch-test": "nodemon --exec \"npm test\""
     },
     "dependencies": {

@@ -40,13 +40,20 @@ io.on('connection', (socket) => {
 
 
         socket.on("newMessage", (message, callBAck) => {
-            console.log("sent message", message);
-            io.emit("serverMessage", generateMessage(message.from, message.text));
+            var user = users.getUser(socket.id);
+
+            if (user && isValidString(message.text)) {
+                io.to(user.chatRoom).emit("serverMessage", generateMessage(user.displayName, message.text));
+            }
             callBAck("Sent from server");
         })
 
         socket.on("geolocationMessage", (coords) => {
-            io.emit("newLocationMessage", generateLocationMessage("Admin", `${coords.latitude}, ${coords.longitude}`))
+            var user = users.getUser(socket.id);
+
+            if (user) {
+                io.to(user.chatRoom).emit("newLocationMessage", generateLocationMessage(user.displayName, `${coords.latitude}, ${coords.longitude}`))
+            }
         })
 
         socket.on("disconnect", () => {
